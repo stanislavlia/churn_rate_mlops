@@ -1,0 +1,7 @@
+[core]
+    remote = minio
+['remote "minio"']
+    url = s3://churn-data
+    endpointurl = http://localhost:9000
+    access_key_id = your_username
+    secret_access_key = your_password
