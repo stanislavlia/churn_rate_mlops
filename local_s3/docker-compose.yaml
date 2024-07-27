@@ -2,7 +2,7 @@ version: '3'
 
 services:
   minio:
-    image: docker.io/bitnami/minio:2022
+    image: docker.io/bitnami/minio:latest
     ports:
       - '9000:9000'
       - '9001:9001'
@@ -12,8 +12,10 @@ services:
       - 'minio_data:/data'
     environment:
       - MINIO_ROOT_USER=your_username
-      - MINIO_ROOT_PASSWORD=your_pasword
+      - MINIO_ROOT_PASSWORD=your_password
       - MINIO_DEFAULT_BUCKETS=churn-data
+      - MINIO_SERVER_URL=http://localhost:9000
+      - MINIO_SCHEME=http
 
 networks:
   minionetwork:
