@@ -2,3 +2,4 @@ venv/
 data/
 processed_data/
 *.csv
+/processed_data
