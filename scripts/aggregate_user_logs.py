@@ -15,6 +15,7 @@ def aggregate_user_logs(input_path, output_dir):
 
     aggregated_df = user_logs_df.group_by('msno').agg([
     pl.col('date').mean().alias('mean_date'),
+    pl.col('date').count().alias('count_of_logs'),
     pl.col('num_25').mean().alias('mean_num_25'),
     pl.col('num_50').mean().alias('mean_num_50'),
     pl.col('num_75').mean().alias('mean_num_75'),
