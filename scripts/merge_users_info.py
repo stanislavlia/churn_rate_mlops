@@ -14,6 +14,10 @@ def merge_users_data(members_path,
                      agg_transactions_path,
                      output_dir):
     
+    if os.path.exists(os.path.join(output_dir, "users_data_merged.csv")):
+        print("The artifact already exists!")
+        return
+    
     members_df = pl.scan_csv(members_path)
     agg_logs_df = pl.scan_csv(agg_logs_path)
     agg_transactions_df = pl.scan_csv(agg_transactions_path)

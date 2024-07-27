@@ -6,6 +6,11 @@ import os
 @click.option("--input_path", default="../raw_data/transactions_v2.csv")
 @click.option("--output_dir")
 def aggregate_user_transactions(input_path, output_dir):
+
+
+    if os.path.exists(os.path.join(output_dir, "aggregated_transactions.csv")):
+        print("The artifact already exists!")
+        return
     
     user_transactions_df = pl.scan_csv(input_path)
     
