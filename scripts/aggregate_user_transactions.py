@@ -4,8 +4,8 @@ import os
 
 
 @click.command()
-@click.option("--input_path", default="../raw_data/transactions_v2.csv")
-@click.option("--output_dir")
+@click.option("--input_path", type=click.Path(exists=True), default="../raw_data/transactions_v2.csv")
+@click.option("--output_dir", type=click.Path())
 def aggregate_user_transactions(input_path, output_dir):
 
     if os.path.exists(os.path.join(output_dir, "aggregated_transactions.csv")):
