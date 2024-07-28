@@ -1,0 +1,33 @@
+stages:
+  get_imputation_config:
+    cmd: python3 scripts/get_imputation_config.py --train_data processed_data/users_data_merged.csv   --config_output artifacts/imputation_config.json
+    deps:
+      - processed_data/users_data_merged.csv
+      - scripts/get_imputation_config.py
+    outs:
+      - artifacts/imputation_config.json
+  
+  impute_data:
+    cmd: python3 scripts/impute_data.py --data processed_data/users_data_merged.csv --imput_config artifacts/imputation_config.json --output processed_data/users_data_imp.csv
+    deps:
+      - processed_data/users_data_merged.csv
+      - artifacts/imputation_config.json
+      - scripts/impute_data.py
+    outs:
+      - processed_data/users_data_imp.csv
+  
+  get_handcraft_features:
+    cmd: python3 scripts/build_handcraft_features.py --input_path processed_data/users_data_imp.csv --output_path features_crafted/handcrafted_features.csv
+    deps:
+      - processed_data/users_data_imp.csv
+      - scripts/build_handcraft_features.py
+    outs:
+      - features_crafted/handcrafted_features.csv
+
+
+  
+      
+
+
+  
+    

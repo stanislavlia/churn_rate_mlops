@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  get_imputation_config:
+    cmd: python3 scripts/get_imputation_config.py --train_data processed_data/users_data_merged.csv   --config_output
+      artifacts/imputation_config.json
+    deps:
+    - path: processed_data/users_data_merged.csv
+      hash: md5
+      md5: ff11b9fe00fe1b4788849649e845bae0
+      size: 1199212193
+    - path: scripts/get_imputation_config.py
+      hash: md5
+      md5: 74366a1465361a920a04849a5fcb167f
+      size: 1324
+    outs:
+    - path: artifacts/imputation_config.json
+      hash: md5
+      md5: 3d1ab8245b966a43ed203a03a44fa6a2
+      size: 1020
+  impute_data:
+    cmd: python3 scripts/impute_data.py --data processed_data/users_data_merged.csv
+      --imput_config artifacts/imputation_config.json --output processed_data/users_data_imp.csv
+    deps:
+    - path: artifacts/imputation_config.json
+      hash: md5
+      md5: 3d1ab8245b966a43ed203a03a44fa6a2
+      size: 1020
+    - path: processed_data/users_data_merged.csv
+      hash: md5
+      md5: ff11b9fe00fe1b4788849649e845bae0
+      size: 1199212193
+    - path: scripts/impute_data.py
+      hash: md5
+      md5: 3179c2c01bee1405ef6606274eea96ad
+      size: 760
+    outs:
+    - path: processed_data/users_data_imp.csv
+      hash: md5
+      md5: 6171cfb190a822bc519611ef5e019791
+      size: 2548212925
+  get_handcraft_features:
+    cmd: python3 scripts/build_handcraft_features.py --input_path processed_data/users_data_imp.csv
+      --output_path features_crafted/handcrafted_features.csv
+    deps:
+    - path: processed_data/users_data_imp.csv
+      hash: md5
+      md5: 6171cfb190a822bc519611ef5e019791
+      size: 2548212925
+    - path: scripts/build_handcraft_features.py
+      hash: md5
+      md5: 046c4e9c402011939ac2195beb6d9e5c
+      size: 2107
+    outs:
+    - path: features_crafted/handcrafted_features.csv
+      hash: md5
+      md5: 369f22f40a433b7a48bb8e580b62776e
+      size: 1661522569
