@@ -1,5 +1,6 @@
 venv/
 data/
+artifacts/
 processed_data/
 *.csv
 /processed_data

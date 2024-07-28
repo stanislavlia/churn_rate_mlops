@@ -30,7 +30,9 @@ def build_handcraft_features(input_path, output_path):
         "fe_city_div_payment_days": df["city"] / (df["mean_payment_plan_days"] + epsilon),
     })
 
-    new_df.write_csv(output_path)
+    new_df.write_csv(output_path,
+                     float_precision=8,
+                     batch_size=2000)
 
 
 if __name__ == "__main__":
