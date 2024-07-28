@@ -7,7 +7,7 @@ import os
 @click.option("--output_path", help="CSV file to write crafted features to")
 def build_handcraft_features(input_path, output_path):
     df = pl.read_csv(input_path)
-    epsilon = 1e-8
+    epsilon = 1e-5
 
     new_df = pl.DataFrame({
         "msno": df["msno"],
