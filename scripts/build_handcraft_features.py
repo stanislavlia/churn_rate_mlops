@@ -2,9 +2,12 @@ import click
 import polars as pl
 import os
 
+
 @click.command()
-@click.option("--input_path", help="Merged data about user (.csv file)", type=click.Path(exists=True))
-@click.option("--output_path", help="CSV file to write crafted features to", type=click.Path())
+@click.option("--input_path", help="Merged data about user (.csv file)",
+              type=click.Path(exists=True))
+@click.option("--output_path",
+              help="CSV file to write crafted features to", type=click.Path())
 def build_handcraft_features(input_path, output_path):
     df = pl.read_csv(input_path)
     epsilon = 1e-5
@@ -28,6 +31,7 @@ def build_handcraft_features(input_path, output_path):
     })
 
     new_df.write_csv(output_path)
+
 
 if __name__ == "__main__":
     build_handcraft_features()
