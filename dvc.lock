@@ -1,13 +1,13 @@
 schema: '2.0'
 stages:
   get_imputation_config:
-    cmd: python3 scripts/get_imputation_config.py --train_data processed_data/full_train_data.csv   --config_output
-      artifacts/imputation_config.json
+    cmd: python3 scripts/get_imputation_config.py --train_data processed_data/full_train_data.csv
+      --config_output artifacts/imputation_config.json
     deps:
     - path: processed_data/full_train_data.csv
       hash: md5
-      md5: 06df66526f46bf46db211b17606cee65
-      size: 542604302
+      md5: afaa893922df3136c17888f246a0a93b
+      size: 737931695
     - path: scripts/get_imputation_config.py
       hash: md5
       md5: 74366a1465361a920a04849a5fcb167f
@@ -15,20 +15,20 @@ stages:
     outs:
     - path: artifacts/imputation_config.json
       hash: md5
-      md5: d67087d44d46bebfd6f014105df9f7f4
-      size: 1061
+      md5: 7708bf84dc6360582ae9507e48f7889f
+      size: 1057
   impute_data:
-    cmd: python3 scripts/impute_data.py --data processed_data/full_train_data.csv    --imput_config
-      artifacts/imputation_config.json --output processed_data/full_train_data_imp.csv
+    cmd: python3 scripts/impute_data.py --data processed_data/full_train_data.csv
+      --imput_config artifacts/imputation_config.json --output processed_data/full_train_data_imp.csv
     deps:
     - path: artifacts/imputation_config.json
       hash: md5
-      md5: d67087d44d46bebfd6f014105df9f7f4
-      size: 1061
+      md5: 7708bf84dc6360582ae9507e48f7889f
+      size: 1057
     - path: processed_data/full_train_data.csv
       hash: md5
-      md5: 06df66526f46bf46db211b17606cee65
-      size: 542604302
+      md5: afaa893922df3136c17888f246a0a93b
+      size: 737931695
     - path: scripts/impute_data.py
       hash: md5
       md5: 3179c2c01bee1405ef6606274eea96ad
@@ -36,16 +36,16 @@ stages:
     outs:
     - path: processed_data/full_train_data_imp.csv
       hash: md5
-      md5: ba757aa106a8f2e190949367af3ddef3
-      size: 285223446
+      md5: 3dd72c156ccff88598c54308a41ee074
+      size: 2675518961
   get_handcraft_features:
     cmd: python3 scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv
       --output_path features_crafted/handcrafted_features.csv
     deps:
     - path: processed_data/full_train_data_imp.csv
       hash: md5
-      md5: ba757aa106a8f2e190949367af3ddef3
-      size: 285223446
+      md5: 3dd72c156ccff88598c54308a41ee074
+      size: 2675518961
     - path: scripts/build_handcraft_features.py
       hash: md5
       md5: 117e90ea2ad63b5ccdfd6d061ab58481
@@ -53,5 +53,86 @@ stages:
     outs:
     - path: features_crafted/handcrafted_features.csv
       hash: md5
-      md5: 43fb8dce943953d0ed48831d1cd9d54d
-      size: 215910468
+      md5: 61799e381137cacec99c966866011244
+      size: 1582267821
+  aggregate_transactions:
+    cmd: python3 scripts/aggregate_user_transactions.py --input_path raw_data/transactions_v2.csv
+      --output_dir processed_data/
+    deps:
+    - path: raw_data/transactions_v2.csv
+      hash: md5
+      md5: efd930e7c6b2df1992fb94256150ff54
+      size: 115394513
+    - path: scripts/aggregate_user_transactions.py
+      hash: md5
+      md5: 5172204525343dd3acf027ddb0e13c4f
+      size: 2311
+    outs:
+    - path: processed_data/aggregated_transactions.csv
+      hash: md5
+      md5: 4086bb3103996e55bcfff04bffc8a3d0
+      size: 423236909
+  aggregate_logs:
+    cmd: python3 scripts/aggregate_user_logs.py --input_path raw_data/user_logs_v2.csv
+      --output_dir processed_data/
+    deps:
+    - path: raw_data/user_logs_v2.csv
+      hash: md5
+      md5: 8d78f22a54dff9f9418f09b252290739
+      size: 1431465728
+    - path: scripts/aggregate_user_logs.py
+      hash: md5
+      md5: 28c95250c4b0951ef9bebcfb12fe4fc5
+      size: 1728
+    outs:
+    - path: processed_data/aggregated_logs.csv
+      hash: md5
+      md5: 273365e3c190090d1628a9a4270dca5c
+      size: 374718127
+  merge_all_tables:
+    cmd: python3 scripts/merge_users_info.py --members_path raw_data/members_v3.csv
+      --agg_logs_path processed_data/aggregated_logs.csv --agg_transactions_path processed_data/aggregated_transactions.csv
+      --output_dir processed_data/
+    deps:
+    - path: processed_data/aggregated_logs.csv
+      hash: md5
+      md5: 273365e3c190090d1628a9a4270dca5c
+      size: 374718127
+    - path: processed_data/aggregated_transactions.csv
+      hash: md5
+      md5: 4086bb3103996e55bcfff04bffc8a3d0
+      size: 423236909
+    - path: raw_data/members_v3.csv
+      hash: md5
+      md5: 06c6508e09f6371c4b6259307e2fa429
+      size: 427921437
+    - path: scripts/merge_users_info.py
+      hash: md5
+      md5: fe87e24f79d3cb01118bde7cf7efed11
+      size: 1504
+    outs:
+    - path: processed_data/users_data_merged.csv
+      hash: md5
+      md5: 7de8d7575607794710bfd4f4ff560509
+      size: 1199212193
+  build_train_data:
+    cmd: python3 scripts/build_train_data.py --merged_data_path processed_data/users_data_merged.csv
+      --train_labels_path raw_data/train_v2.csv --output_dir processed_data/
+    deps:
+    - path: processed_data/users_data_merged.csv
+      hash: md5
+      md5: 7de8d7575607794710bfd4f4ff560509
+      size: 1199212193
+    - path: raw_data/train_v2.csv
+      hash: md5
+      md5: 2b2053237787f2a93402561a3e96e4a7
+      size: 45635134
+    - path: scripts/build_train_data.py
+      hash: md5
+      md5: 5d01bc7cc36a87e1085c22af5b41063d
+      size: 786
+    outs:
+    - path: processed_data/full_train_data.csv
+      hash: md5
+      md5: afaa893922df3136c17888f246a0a93b
+      size: 737931695
