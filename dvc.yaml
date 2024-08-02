@@ -1,24 +1,24 @@
 stages:
   aggregate_transactions:
-    cmd: python3 scripts/aggregate_user_transactions.py --input_path sampled_data/transactions_sample.csv --output_dir processed_data/
+    cmd: python3 preprocessing_scripts/aggregate_user_transactions.py --input_path sampled_data/transactions_sample.csv --output_dir processed_data/
     deps:
-      - scripts/aggregate_user_transactions.py
+      - preprocessing_scripts/aggregate_user_transactions.py
       - sampled_data/transactions_sample.csv
     outs:
       - processed_data/aggregated_transactions.csv
 
   aggregate_logs:
-    cmd: python3 scripts/aggregate_user_logs.py --input_path sampled_data/user_logs_sample.csv --output_dir processed_data/
+    cmd: python3 preprocessing_scripts/aggregate_user_logs.py --input_path sampled_data/user_logs_sample.csv --output_dir processed_data/
     deps:
-      - scripts/aggregate_user_logs.py
+      - preprocessing_scripts/aggregate_user_logs.py
       - sampled_data/user_logs_sample.csv
     outs:
       - processed_data/aggregated_logs.csv
 
   merge_all_tables:
-    cmd: python3 scripts/merge_users_info.py --members_path sampled_data/members_sample.csv --agg_logs_path processed_data/aggregated_logs.csv --agg_transactions_path processed_data/aggregated_transactions.csv --output_dir processed_data/
+    cmd: python3 preprocessing_scripts/merge_users_info.py --members_path sampled_data/members_sample.csv --agg_logs_path processed_data/aggregated_logs.csv --agg_transactions_path processed_data/aggregated_transactions.csv --output_dir processed_data/
     deps:
-      - scripts/merge_users_info.py
+      - preprocessing_scripts/merge_users_info.py
       - sampled_data/members_sample.csv
       - processed_data/aggregated_logs.csv
       - processed_data/aggregated_transactions.csv
@@ -26,36 +26,35 @@ stages:
       - processed_data/users_data_merged.csv
 
   build_train_data:
-    cmd: python3 scripts/build_train_data.py --merged_data_path processed_data/users_data_merged.csv --train_labels_path sampled_data/train_v2.csv --output_dir processed_data/
+    cmd: python3 preprocessing_scripts/build_train_data.py --merged_data_path processed_data/users_data_merged.csv --train_labels_path sampled_data/train_v2.csv --output_dir processed_data/
     deps:
-      - scripts/build_train_data.py
+      - preprocessing_scripts/build_train_data.py
       - processed_data/users_data_merged.csv
       - sampled_data/train_v2.csv
     outs:
       - processed_data/full_train_data.csv
 
   get_imputation_config:
-    cmd: python3 scripts/get_imputation_config.py --train_data processed_data/full_train_data.csv --config_output artifacts/imputation_config.json
+    cmd: python3 preprocessing_scripts/get_imputation_config.py --train_data processed_data/full_train_data.csv --config_output artifacts/imputation_config.json
     deps:
-      - scripts/get_imputation_config.py
+      - preprocessing_scripts/get_imputation_config.py
       - processed_data/full_train_data.csv
     outs:
       - artifacts/imputation_config.json
 
   impute_data:
-    cmd: python3 scripts/impute_data.py --data processed_data/full_train_data.csv --imput_config artifacts/imputation_config.json --output processed_data/full_train_data_imp.csv
+    cmd: python3 preprocessing_scripts/impute_data.py --data processed_data/full_train_data.csv --imput_config artifacts/imputation_config.json --output processed_data/full_train_data_imp.csv
     deps:
-      - scripts/impute_data.py
+      - preprocessing_scripts/impute_data.py
       - processed_data/full_train_data.csv
       - artifacts/imputation_config.json
     outs:
       - processed_data/full_train_data_imp.csv
 
   get_handcraft_features:
-    cmd: python3 scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv --output_path features_crafted/handcrafted_features.csv
+    cmd: python3 preprocessing_scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv --output_path features_crafted/handcrafted_features.csv
     deps:
-      - scripts/build_handcraft_features.py
+      - preprocessing_scripts/build_handcraft_features.py
       - processed_data/full_train_data_imp.csv
     outs:
       - features_crafted/handcrafted_features.csv
-
