@@ -40,7 +40,7 @@ stages:
       size: 40307736
   get_handcraft_features:
     cmd: python3 preprocessing_scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv
-      --output_path features_crafted/handcrafted_features.csv
+      --output_path processed_data/features_crafted/handcrafted_features.csv
     deps:
     - path: preprocessing_scripts/build_handcraft_features.py
       hash: md5
@@ -51,7 +51,7 @@ stages:
       md5: 6a3e174c97d201e82f077b8d3fc420e6
       size: 40307736
     outs:
-    - path: features_crafted/handcrafted_features.csv
+    - path: processed_data/features_crafted/handcrafted_features.csv
       hash: md5
       md5: 07017c1ffbb88d6d3fa182f47d9c148e
       size: 15570299

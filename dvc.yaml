@@ -52,9 +52,9 @@ stages:
       - processed_data/full_train_data_imp.csv
 
   get_handcraft_features:
-    cmd: python3 preprocessing_scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv --output_path features_crafted/handcrafted_features.csv
+    cmd: python3 preprocessing_scripts/build_handcraft_features.py --input_path processed_data/full_train_data_imp.csv --output_path processed_data/features_crafted/handcrafted_features.csv
     deps:
       - preprocessing_scripts/build_handcraft_features.py
       - processed_data/full_train_data_imp.csv
     outs:
-      - features_crafted/handcrafted_features.csv
+      - processed_data/features_crafted/handcrafted_features.csv
