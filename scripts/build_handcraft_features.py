@@ -10,7 +10,7 @@ import os
               help="CSV file to write crafted features to", type=click.Path())
 def build_handcraft_features(input_path, output_path):
     df = pl.read_csv(input_path)
-    epsilon = 1e-5
+    epsilon = 0.001
 
     new_df = pl.DataFrame({
         "msno": df["msno"],
@@ -31,7 +31,6 @@ def build_handcraft_features(input_path, output_path):
     })
 
     new_df.write_csv(output_path,
-                     float_precision=8,
                      batch_size=2000)
 
 

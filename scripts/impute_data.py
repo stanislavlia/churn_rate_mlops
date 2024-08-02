@@ -9,7 +9,8 @@ def impute_missing_values(df, imputation_config):
         if value is not None:
             df = df.with_columns(pl.col(column).fill_null(value))
     return df
-
+#TODO: Fix this script. It does something wrong certainly
+      # it spoils target variable and make file very large
 
 @click.command()
 @click.option("--data", help="Path to csv file with merged data")
@@ -24,7 +25,7 @@ def impute_data(data, imput_config, output):
 
     df = impute_missing_values(df, config)
 
-    df.write_csv(output)
+    df.write_csv(output, float_precision=4)
 
 
 if __name__ == "__main__":
