@@ -1,0 +1,5 @@
+outs:
+- md5: 14a9e051d1fb0500cf67d0bf4e2546d5
+  size: 6177626
+  hash: md5
+  path: members_sample.csv
