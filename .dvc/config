@@ -1,0 +1,5 @@
+[core]
+    remote = myminio
+['remote "myminio"']
+    url = s3://churn-data
+    endpointurl = http://localhost:9000
