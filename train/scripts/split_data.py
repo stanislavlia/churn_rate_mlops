@@ -17,7 +17,10 @@ def split_data(data, output_dir, train_size):
     
     #sort values by date of user registration
     df = df.sort_values(by="registration_init_time")
-    
+    try:
+        df.drop('Unnamed: 0', axis=1, inplace=True)
+    except:
+        print("Unnamed not found")
     
     train_df = df[:train_idx_end]
     
@@ -25,9 +28,9 @@ def split_data(data, output_dir, train_size):
     test_df = df[test_idx:]
     
     #save splits to csv
-    train_df.to_csv(os.path.join(output_dir, "train_split.csv"))
-    val_df.to_csv(os.path.join(output_dir, "val_split.csv"))
-    test_df.to_csv(os.path.join(output_dir, "test_split.csv"))
+    train_df.to_csv(os.path.join(output_dir, "train_split.csv"), index=False)
+    val_df.to_csv(os.path.join(output_dir, "val_split.csv"), index=False)
+    test_df.to_csv(os.path.join(output_dir, "test_split.csv"), index=False)
     
    
 if __name__ == "__main__":
