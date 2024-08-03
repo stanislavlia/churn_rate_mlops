@@ -1,8 +1,3 @@
-import optuna
-from catboost import CatBoostClassifier
-from lightgbm import LGBMClassifier
-from xgboost import XGBClassifier
-import mlflow
 import click
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import os
@@ -10,7 +5,6 @@ import json
 import joblib
 import pandas as pd
 
-SPLITS_PATH = "/"
 ARTIFACTS_PATH = "/home/stanislav/Desktop/churn_forecast/artifacts"
 
 def build_scaler(df,
@@ -27,12 +21,17 @@ def build_scaler(df,
         json.dump({"features" : numeric_features_to_scale}, f)
 
     
-def preprocessing(df, train=True, artifacts_path=ARTIFACTS_PATH):
+def preprocess(df, train=True, artifacts_path=ARTIFACTS_PATH):
     TO_DROP = ["msno", "registration_init_time", "last_transaction_date"]
     
     df["gender"] = df["gender"].replace({"male": 1, "female": -1, "MISSING": 0})
     
     df = df.drop(TO_DROP, axis=1)
+    
+    if df.empty:
+        print("Warning: The DataFrame is empty after preprocessing. No scaling applied.")
+        return df  # or handle as needed
+
     
     if 'is_churn' in df.columns:
         target = df['is_churn'].copy()
@@ -56,11 +55,23 @@ def preprocessing(df, train=True, artifacts_path=ARTIFACTS_PATH):
     return transformed_df
 
 
-
-
 @click.command()
-@click.option("--model_type", help='Supported models [xgboost, catboost, lightgbm, rf]')
-@click.option("--run_name")
-#...
-def tune_params(model_type, run_name, n_trials, time_limit):
-    pass
+@click.option("--splits_dir", help="Dir with splits")
+def preprocessing(splits_dir):
+    
+    train_df = pd.read_csv(os.path.join(splits_dir, "train_split.csv"))
+    val_df = pd.read_csv(os.path.join(splits_dir, "val_split.csv"))
+    test_df = pd.read_csv(os.path.join(splits_dir, "test_split.csv"))
+    
+    
+    processed_train_df = preprocess(train_df, train=True, artifacts_path=ARTIFACTS_PATH)
+    processed_val_df = preprocess(val_df, train=False, artifacts_path=ARTIFACTS_PATH)
+    processed_test_df = preprocess(test_df, train=False, artifacts_path=ARTIFACTS_PATH)
+    
+    processed_train_df.to_csv(os.path.join(splits_dir, "train_processed.csv"))
+    processed_val_df.to_csv(os.path.join(splits_dir, "val_processed.csv"))
+    processed_test_df.to_csv(os.path.join(splits_dir, "test_processed.csv"))
+    
+    
+if __name__ == "__main__":
+    preprocessing()
