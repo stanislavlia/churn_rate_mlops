@@ -17,10 +17,24 @@ services:
       - MINIO_SERVER_URL=http://localhost:9000
       - MINIO_SCHEME=http
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - '9000:9000' # You can use any other available port
+    networks:
+      - minionetwork
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - 'portainer_data:/data'
+    command: -H unix:///var/run/docker.sock
+
+
 networks:
   minionetwork:
     driver: bridge
 
 volumes:
   minio_data:
+    driver: local
+  portainer_data:
     driver: local
