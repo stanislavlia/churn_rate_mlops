@@ -30,8 +30,8 @@ services:
     volumes:
       - ./minio/:/data 
     environment:
-      - MINIO_ACESS_KEY=admin
-      - MINIO_SECRET_KEY=admin
+      - MINIO_ACCESS_KEY=your_username
+      - MINIO_SECRET_KEY=your_password
       - MINIO_ROOT_USER=your_username
       - MINIO_ROOT_PASSWORD=your_password
     healthcheck:
@@ -39,6 +39,8 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
+    networks:
+      - tracking
 
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.0.1
@@ -50,15 +52,15 @@ services:
       BACKEND_URI: postgresql://admin:admin@postgres:5432/mlflow
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
       ARTIFACT_ROOT: s3://mlflow-artifacts
-      AWS_ACCESS_KEY_ID: admin
-      AWS_SECRET_ACCESS_KEY: admin
+      AWS_ACCESS_KEY_ID: your_username
+      AWS_SECRET_ACCESS_KEY: your_password
     depends_on:
       - postgres
       - minio
     networks:
       - tracking
     command: >
-      /bin/sh -c "pip install psycopg2-binary && mlflow server
+      /bin/sh -c "pip install psycopg2-binary && pip install boto3 && mlflow server
       --backend-store-uri postgresql://admin:admin@postgres:5432/mlflow
       --default-artifact-root s3://mlflow-artifacts
       --host 0.0.0.0
