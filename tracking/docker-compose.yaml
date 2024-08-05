@@ -1,0 +1,53 @@
+
+# Docker compose to set up Experiment tracking system Mlflow-postgres-S3
+
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mlflow
+    ports:
+      - "5439:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5" # Limit to 0.5 CPU
+          memory: "512M" # Limit to 512 MB of memory
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - tracking
+
+  minio:
+    image: docker.io/bitnami/minio:latest
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - ./minio/:/data 
+    environment:
+      - MINIO_ACESS_KEY=admin
+      - MINIO_SECRET_KEY=admin
+      - MINIO_ROOT_USER=your_username
+      - MINIO_ROOT_PASSWORD=your_password
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - tracking
+  
+
+volumes:
+  pgdata:
+  portainer_data:
+
+networks:
+  tracking:
+    driver: bridge
