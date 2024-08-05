@@ -73,6 +73,7 @@ services:
 volumes:
   pgdata:
   portainer_data:
+  minio:
 
 networks:
   tracking:
