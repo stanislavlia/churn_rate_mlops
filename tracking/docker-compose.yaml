@@ -28,12 +28,15 @@ services:
       - '9000:9000'
       - '9001:9001'
     volumes:
-      - ./minio/:/data 
+      - './minio_data:/data'
     environment:
       - MINIO_ACCESS_KEY=your_username
       - MINIO_SECRET_KEY=your_password
       - MINIO_ROOT_USER=your_username
       - MINIO_ROOT_PASSWORD=your_password
+      - MINIO_DEFAULT_BUCKETS=mlflow-artifacts
+      - MINIO_SERVER_URL=http://localhost:9000
+      - MINIO_SCHEME=http
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 20s
@@ -67,13 +70,9 @@ services:
       --port 5000"
       
     
-    
-
-
 volumes:
   pgdata:
-  portainer_data:
-  minio:
+  minio_data:
 
 networks:
   tracking:
